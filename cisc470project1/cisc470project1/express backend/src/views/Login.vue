@@ -1,0 +1,143 @@
+<template>
+  <div class="login-page">
+    <header class="app-header">
+      <h1>To-Do App</h1>
+    </header>
+
+    <div class="login-form">
+      <h2>Login</h2>
+      <p v-if="loginStatus" class="status">{{ loginStatus }}</p>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      <form @submit.prevent="handleLogin">
+        <input v-model="email" type="email" placeholder="Email" required />
+        <input v-model="password" type="password" placeholder="Password" required />
+        <button type="submit" class="login-button">Login</button>
+        <router-link to="/register" class="register-button">Register</router-link>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapActions, mapState } from 'vuex';
+
+export default {
+  data() {
+    return {
+      email: '',
+      password: '',
+    };
+  },
+  computed: {
+    ...mapState(['loginStatus', 'errorMessage'])
+  },
+  methods: {
+    ...mapActions(['login']),
+    async handleLogin() {
+      await this.login({ email: this.email, password: this.password });
+      if (this.loginStatus === 'Login successful') {
+        await this.$router.push('/dashboard');
+      }
+      setTimeout(() => {
+        this.$store.commit('clearStatusMessages');
+      }, 3000); // Clear message after 3 seconds
+    }
+  }
+};
+</script>
+
+<style scoped>
+.status {
+  color: green;
+  margin-bottom: 15px;
+}
+.error {
+  color: red;
+  margin-bottom: 15px;
+}
+
+/* Page container */
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+/* Header */
+.app-header {
+  width: 100%;
+  padding: 20px 0;
+  background-color: #2d3748;
+  color: white;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+}
+
+/* Form container */
+.login-form {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Form title */
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #4a5568;
+}
+
+/* Form inputs */
+form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Buttons */
+.login-button,
+.register-button {
+  display: inline-block; /* Makes both buttons behave the same */
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box; /* Ensures padding and borders don't affect width */
+  transition: background-color 0.3s;
+}
+
+.login-button {
+  background-color: #4c51bf;
+}
+
+.login-button:hover {
+  background-color: #434190;
+}
+
+.register-button {
+  background-color: #38a169;
+  text-decoration: none;
+}
+
+.register-button:hover {
+  background-color: #2f855a;
+}
+</style>
